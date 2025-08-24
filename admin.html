@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MonShop • Admin</title>
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:#0f172a;color:#e2e8f0;margin:0}
+    header{padding:1rem 1.2rem;background:#111827;border-bottom:1px solid #1f2937}
+    .container{max-width:420px;margin:2rem auto;padding:1rem;background:#111827;border:1px solid #1f2937;border-radius:1rem}
+    label{display:block;margin-top:.5rem}.muted{color:#9ca3af}
+    input{width:100%;padding:.5rem;border-radius:.5rem;border:1px solid #334155;background:#0b1220;color:#e2e8f0}
+    button{background:#2563eb;color:#fff;border:none;padding:.5rem .8rem;border-radius:.5rem;margin-top:.8rem;cursor:pointer}
+    .alert{background:#7f1d1d;color:#fecaca;border-radius:.5rem;padding:.5rem .75rem;margin-top:.5rem}
+    .ok{background:#064e3b;color:#bbf7d0;border-radius:.5rem;padding:.5rem .75rem;margin-top:.5rem}
+  </style>
+</head>
+<body>
+<header><a href="/" style="color:#93c5fd;text-decoration:none;">← Back to shop</a></header>
+<main>
+  <div class="container">
+    <h2>Admin Login</h2>
+    <p class="muted">Use <b>admin</b> / <b>admin123</b> to test.</p>
+    <label>Username</label>
+    <input id="u" placeholder="admin" />
+    <label>Password</label>
+    <input id="p" type="password" placeholder="admin123" />
+    <button onclick="login()">Sign in</button>
+    <div id="msg"></div>
+  </div>
+</main>
+<script>
+async function login(){
+  const msg = document.getElementById('msg');
+  msg.textContent = '';
+  try {
+    const r = await fetch('/api/users', {
+      method:'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ username: document.getElementById('u').value, password: document.getElementById('p').value })
+    });
+    const json = await r.json();
+    if(!r.ok){ msg.innerHTML = '<div class="alert">'+(json.error||'Login failed')+'</div>'; return; }
+    msg.innerHTML = '<div class="ok">Welcome '+json.username+' ('+json.role+')</div>';
+  } catch (e){
+    msg.innerHTML = '<div class="alert">Network error</div>';
+  }
+}
+</script>
+</body>
+</html>
